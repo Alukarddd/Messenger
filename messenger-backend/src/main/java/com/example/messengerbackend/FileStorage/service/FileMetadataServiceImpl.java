@@ -110,6 +110,12 @@ public class FileMetadataServiceImpl implements FileMetadataService {
                 .toList();
     }
 
+    @Override
+    public FileMetadataDto getFileMetadata(long id) {
+        var FileMetaData =  fileMetadataRepository.findById(id).orElseThrow();
+        return fileMetadataMapper.toDto(FileMetaData);
+    }
+
     private String getFileExtension(String fileName) {
         if (fileName != null && fileName.contains(".")) {
             return fileName.substring(fileName.lastIndexOf("."));

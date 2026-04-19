@@ -1,27 +1,40 @@
 package com.example.messengerbackend.messages.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
 @Table(name = "attachments")
-@Data
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@Builder
 public class Attachment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "attachment_id")
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "chat_id")
-    private Chat chat;
+    @Column(name = "message_id")
+    private UUID messageId;
 
-    private String url;
-    private String type; // "IMAGE", "FILE", "LINK"
-    private String fileName;
+    @Column(name = "chat_id")
+    private UUID chatId;
+
+    @Column(name = "file_id")
+    private long fileId; // Ссылка на ID из FileMetadataDto
+
+    @Column(name = "mime_type")
+    private String mimeType;
+
+    @Column(name = "logic_type")
+    private String logicType;
+
+    private String filename;
 
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
 }

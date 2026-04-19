@@ -28,7 +28,6 @@ export const handleTokenRefresh = async () => {
                 body: JSON.stringify({ refreshToken }),
             });
 
-            // Если сервер ПРЯМО сказал, что рефреш-токен невалиден
             if (response.status === 401 || response.status === 403) {
                 console.error("Refresh token expired or invalid");
                 logout();
@@ -36,8 +35,6 @@ export const handleTokenRefresh = async () => {
             }
 
             if (!response.ok) {
-                // Если это 500 ошибка или лаг сети, мы НЕ делаем logout.
-                // Мы просто выбрасываем ошибку, чтобы попробовать позже.
                 throw new Error("Server error during refresh");
             }
 
@@ -47,7 +44,6 @@ export const handleTokenRefresh = async () => {
             return data.accessToken;
 
         } catch (error) {
-            // Если это ошибка сети (failed to fetch), просто пробрасываем её
             throw error;
         } finally {
             isRefreshing = false;
@@ -61,10 +57,12 @@ export const handleTokenRefresh = async () => {
 export const apiFetch = async (endpoint, options = {}) => {
     const url = endpoint.startsWith('http') ? endpoint : `${GATEWAY_URL}${endpoint}`;
 
-    // Подготовка заголовков
     const getOptions = (token) => {
         const headers = { ...options.headers };
-        if (!(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
+        // Если мы шлем файлы (FormData), браузер сам поставит Content-Type с boundary
+        if (!(options.body instanceof FormData)) {
+            headers['Content-Type'] = 'application/json';
+        }
         if (token) headers['Authorization'] = `Bearer ${token}`;
         return { ...options, headers };
     };
@@ -73,32 +71,39 @@ export const apiFetch = async (endpoint, options = {}) => {
         let response = await fetch(url, getOptions(localStorage.getItem('accessToken')));
 
         if (response.status === 401) {
-            // Пытаемся обновиться
             try {
                 const newToken = await handleTokenRefresh();
-                // Повторяем запрос
                 response = await fetch(url, getOptions(newToken));
             } catch (err) {
-                // Если handleTokenRefresh вызвал logout, код здесь уже не важен
                 throw err;
             }
         }
 
-        return await handleResponse(response);
+        // Передаем параметр isBlob в обработчик ответа
+        return await handleResponse(response, options.isBlob);
     } catch (error) {
         throw error;
     }
 };
 
-async function handleResponse(response) {
+async function handleResponse(response, isBlob = false) {
     if (!response.ok) {
-        // Здесь мы НЕ делаем автоматический logout, 
-        // чтобы случайная ошибка 500 не закрыла сессию.
         const error = new Error(`API Error: ${response.status}`);
         error.status = response.status;
         throw error;
     }
+
+    if (response.status === 204) return null;
+
+    // --- ИЗМЕНЕНИЕ ТУТ ---
+    // Если в опциях запроса указано isBlob: true, возвращаем бинарные данные
+    if (isBlob) {
+        return await response.blob();
+    }
+
+    // Иначе пытаемся прочитать как JSON
     const contentLength = response.headers.get('content-length');
-    if (response.status === 204 || contentLength === '0') return null;
+    if (contentLength === '0') return null;
+    
     return response.json();
 }

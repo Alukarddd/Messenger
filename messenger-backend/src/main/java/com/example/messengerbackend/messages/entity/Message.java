@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -25,4 +26,8 @@ public class Message {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "message_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private List<Attachment> attachments;
 }

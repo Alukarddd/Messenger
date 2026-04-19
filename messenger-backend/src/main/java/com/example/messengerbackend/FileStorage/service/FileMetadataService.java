@@ -15,4 +15,6 @@ public interface FileMetadataService {
     DownloadFileResponse downloadFile(long id);
 
     List<FileMetadataDto> saveFiles(List<MultipartFile> files);
+
+    FileMetadataDto getFileMetadata(long id);
 }
