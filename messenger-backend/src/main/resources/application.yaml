@@ -15,6 +15,10 @@ spring:
         jwt:
           jwk-set-uri: http://localhost:8080/.well-known/jwks.json
 
+file:
+  storage:
+    path: ${FILE_STORAGE_PATH:uploads}
+
 jwt:
   secret: 4eaee43cfe4d9d08e6391dab67baf143
   expiration:

@@ -82,6 +82,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/auth/refresh").permitAll()
                         .requestMatchers("/api/users/exists").permitAll()
                         .requestMatchers("/auth/services/**").permitAll()
+                        .requestMatchers("/ws-chat/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(server -> server.jwt(jwt -> jwt

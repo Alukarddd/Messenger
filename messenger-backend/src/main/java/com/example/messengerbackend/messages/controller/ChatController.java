@@ -27,13 +27,22 @@ public class ChatController {
     @PostMapping("/create-private/{targetUserId}")
     public Chat createChat(@PathVariable int targetUserId, Authentication authentication) {
         log.info("Creating chat with user id: {}", targetUserId);
-
-        int currentUserId = getUserId(authentication); // Твой метод получения ID
-
-        return chatService.createPrivateChat(currentUserId, targetUserId);
+        return chatService.createPrivateChat(getUserId(authentication), targetUserId);
     }
 
-    // Твой стандартный метод из UsersController для получения ID из токена
+    @GetMapping("/my")
+    public List<ChatSummaryDto> getMyChats(Authentication authentication) {
+        log.info("Fetching chats for user");
+        return chatService.getUserChats(getUserId(authentication));
+    }
+
+    // Получение истории сообщений (вызывается один раз при открытии чата)
+    @GetMapping("/{chatId}/messages")
+    public List<Message> getChatMessages(@PathVariable UUID chatId) {
+        log.info("Fetching history for chat: {}", chatId);
+        return messageRepository.findAllByChatIdOrderByCreatedAtAsc(chatId);
+    }
+
     private int getUserId(Authentication authentication) {
         Jwt jwt = (Jwt) authentication.getPrincipal();
         if (jwt.getClaims().containsKey("userId")) {
@@ -42,15 +51,4 @@ public class ChatController {
             throw new InvalidJwtException("Jwt is invalid: claim 'userId' is missing");
         }
     }
-
-    @GetMapping("/my")
-    public List<ChatSummaryDto> getMyChats(Authentication authentication) {
-        return chatService.getUserChats(getUserId(authentication));
-    }
-
-    @GetMapping("/{chatId}/messages")
-    public List<Message> getChatMessages(@PathVariable UUID chatId) {
-        return messageRepository.findAllByChatIdOrderByCreatedAtAsc(chatId);
-    }
-
 }

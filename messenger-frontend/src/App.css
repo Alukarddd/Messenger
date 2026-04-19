@@ -257,3 +257,43 @@ body, html {
 .status-input:focus {
     border-color: #0088cc;
 }
+
+/* Сообщения собеседника */
+.partner-message {
+    align-self: flex-start;
+    background-color: white;
+    border-radius: 15px 15px 15px 0;
+    margin-right: 20%;
+}
+
+/* Мои сообщения */
+.my-message {
+    align-self: flex-end;
+    background-color: #dcf8c6; /* Нежно-зеленый как в WhatsApp */
+    border-radius: 15px 15px 0 15px;
+    margin-left: 20%;
+}
+
+.message-bubble {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    max-width: 70%;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.message-time {
+    font-size: 10px;
+    color: #888;
+    align-self: flex-end;
+    margin-top: 4px;
+}
+
+.messages-area {
+    display: flex;
+    flex-direction: column; /* Важно, чтобы align-self работал */
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}

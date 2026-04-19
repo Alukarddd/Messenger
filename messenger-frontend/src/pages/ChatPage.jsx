@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { User, MessageSquare, Settings, Send, Paperclip, X } from 'lucide-react';
 import { apiFetch } from '../utils/apiClient';
 import ProfileTab from '../components/profile/Profile'; // Импортируем новый компонент
+import SockJS from 'sockjs-client'; // Добавили импорт
+import Stomp from 'stompjs';       // Добавили импорт
 import '../App.css';
 
 const ChatPage = () => {
@@ -14,6 +16,9 @@ const ChatPage = () => {
     const [currentUser, setCurrentUser] = useState(null);
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [message, setMessage] = useState("");
+    const [stompClient, setStompClient] = useState(null);
+    const [connected, setConnected] = useState(false);
+    const messagesEndRef = useRef(null); // Для автоскролла вниз
 
     const isAuthenticated = !!localStorage.getItem('accessToken');
 
@@ -21,6 +26,48 @@ const ChatPage = () => {
     const handleUserUpdate = (updatedUser) => {
         setCurrentUser(updatedUser); // Обновляем состояние в главном компоненте
     };
+
+    // Функция для автоскролла к последнему сообщению
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    // --- 1. ПОДКЛЮЧЕНИЕ К WEBSOCKET ПРИ ЗАПУСКЕ ПРИЛОЖЕНИЯ ---
+    useEffect(() => {
+        const socket = new SockJS('http://localhost:8080/ws-chat');
+        const client = Stomp.over(socket);
+
+        client.connect({}, () => {
+            console.log("Успешное подключение к WebSocket");
+            setConnected(true);
+            setStompClient(client);
+        }, (error) => {
+            console.error("Ошибка подключения к WS:", error);
+        });
+
+        return () => {
+            if (client) client.disconnect();
+        };
+    }, []);
+
+    // --- 2. ПОДПИСКА НА СООБЩЕНИЯ КОНКРЕТНОГО ЧАТА ---
+    useEffect(() => {
+        if (stompClient && selectedChat && connected) {
+            // Подписываемся на топик чата: /topic/chat/{UUID}
+            const subscription = stompClient.subscribe(`/topic/chat/${selectedChat.id}`, (payload) => {
+                const newMessage = JSON.parse(payload.body);
+                // Добавляем новое сообщение в список мгновенно
+                setMessages((prev) => [...prev, newMessage]);
+            });
+
+            return () => subscription.unsubscribe(); // Отписываемся при смене чата
+        }
+    }, [stompClient, selectedChat, connected]);
+
 
     // Загружаем данные пользователя один раз при открытии приложения
     useEffect(() => {
@@ -92,6 +139,22 @@ const ChatPage = () => {
             if (found) setSelectedChat(found);
         } catch (err) { alert("Ошибка при создании чата"); }
     };
+
+    // --- 3. ФУНКЦИЯ ОТПРАВКИ СООБЩЕНИЯ ---
+    const handleSendMessage = () => {
+        if (stompClient && connected && message.trim() && selectedChat) {
+            const messageObj = {
+                content: message,
+                senderId: currentUser.id // Твой ID из профиля
+            };
+
+            // Отправляем на бэкенд в MessageController (@MessageMapping)
+            stompClient.send(`/app/chat/${selectedChat.id}`, {}, JSON.stringify(messageObj));
+            
+            setMessage(""); // Очищаем поле ввода
+        }
+    };
+
 
     const handleLogout = () => {
         localStorage.clear();
@@ -210,55 +273,74 @@ const ChatPage = () => {
             </div>
 
             {/* Правая часть (Окно чата) */}
-            <div className="chat-window">
-                {selectedChat ? (
-                    <>
-                        <div className="chat-header">
-                            <div className="header-user-info" onClick={() => setSidebarOpen(true)} style={{cursor: 'pointer'}}>
-                                <div className="info-icon-btn"><User size={24} color="#555" /></div>
-                                <div>
-                                    <div className="user-name">{selectedChat.partnerName}</div>
-                                    <div className="user-status-online">@{selectedChat.partnerUsername}</div>
-                                </div>
+            {/* Правая часть (Окно чата) */}
+<div className="chat-window">
+    {selectedChat ? (
+        <>
+            <div className="chat-header">
+                <div className="header-user-info" onClick={() => setSidebarOpen(true)} style={{cursor: 'pointer'}}>
+                    <div className="info-icon-btn"><User size={24} color="#555" /></div>
+                    <div>
+                        <div className="user-name">{selectedChat.partnerName}</div>
+                        <div className="user-status-online">@{selectedChat.partnerUsername}</div>
+                    </div>
+                </div>
+            </div>
+
+            {/* ИЗМЕНЕНИЕ 1: Добавлен контейнер для сообщений с логикой "свой/чужой" */}
+            <div className="messages-area">
+                {messages.length > 0 ? (
+                    messages.map((msg, index) => (
+                        <div 
+                            key={msg.id || index} 
+                            /* Динамический класс: если senderId совпадает с моим — сообщение справа */
+                            className={`message-bubble ${msg.senderId === currentUser?.id ? 'my-message' : 'partner-message'}`}
+                        >
+                            <div className="message-content">{msg.content}</div>
+                            <div className="message-time">
+                                {msg.createdAt 
+                                    ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+                                    : 'отправка...'}
                             </div>
                         </div>
-
-                        <div className="messages-area">
-                            {messages.length > 0 ? (
-                                messages.map(msg => (
-                                    <div key={msg.id} className="message-bubble">
-                                        {msg.content}
-                                        <div style={{ fontSize: '10px', color: 'gray', textAlign: 'right', marginTop: '4px' }}>
-                                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div style={{ textAlign: 'center', color: 'gray', marginTop: '20px' }}>
-                                    Сообщений пока нет. Будьте первым!
-                                </div>
-                            )}
-                        </div>
-                        
-                        {/* ПОЛЕ ВВОДА СООБЩЕНИЯ (добавь этот блок, если его не было) */}
-                        <div className="input-area">
-                            <Paperclip size={20} style={{ color: 'gray', cursor: 'pointer' }} />
-                            <input
-                                className="message-input"
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                placeholder="Напишите сообщение..."
-                                onKeyDown={(e) => e.key === 'Enter' && alert("Тут будет отправка")} 
-                            />
-                            <div className="send-btn"><Send size={20} /></div>
-                        </div>
-                    </>
+                    ))
                 ) : (
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'gray' }}>
-                        Выберите чат или используйте поиск, чтобы начать общение
+                    <div style={{ textAlign: 'center', color: 'gray', marginTop: '20px' }}>
+                        Сообщений пока нет. Будьте первым!
                     </div>
                 )}
+                {/* ИЗМЕНЕНИЕ 2: Якорь для автоскролла. Сюда будет прокручиваться экран при новом сообщении */}
+                <div ref={messagesEndRef} />
             </div>
+            
+            <div className="input-area">
+                <Paperclip size={20} style={{ color: 'gray', cursor: 'pointer' }} />
+                <input
+                    className="message-input"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Напишите сообщение..."
+                    /* ИЗМЕНЕНИЕ 3: Теперь вызывается реальная функция отправки handleSendMessage */
+                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()} 
+                />
+                {/* Добавлен обработчик клика на кнопку самолетика */}
+                <div 
+                    className="send-btn" 
+                    onClick={handleSendMessage}
+                    style={{ opacity: connected ? 1 : 0.5, cursor: connected ? 'pointer' : 'not-allowed' }}
+                >
+                    <Send size={20} />
+                </div>
+            </div>
+        </>
+    ) : (
+        /* Если чат не выбран — показываем заглушку */
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'gray' }}>
+            <MessageSquare size={48} style={{ marginBottom: '10px', opacity: 0.3 }} />
+            <p>Выберите чат или используйте поиск, чтобы начать общение</p>
+        </div>
+    )}
+</div>
 
             {/* Боковая панель инфо */}
             {isSidebarOpen && (
