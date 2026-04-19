@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: messenger-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5433/messenger_db
+    username: postgres
+    password: admin
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8080/.well-known/jwks.json
+
+jwt:
+  secret: 4eaee43cfe4d9d08e6391dab67baf143
+  expiration:
+    users: 900000 #15 min
+
+  refresh:
+    expirationMs: 604800000 #7 суток

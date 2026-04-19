@@ -1,0 +1,259 @@
+/* Общие сбросы */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f0f2f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Левая панель */
+.sidebar-left {
+  width: 350px;
+  min-width: 300px;
+  background-color: white;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 20px;
+  background-color: #0088cc;
+  color: white;
+}
+
+.sidebar-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-title {
+  margin: 0;
+}
+
+.logout-btn {
+  font-size: 12px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid white;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.status-container {
+  margin-top: 10px;
+}
+
+.status-label {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.status-input {
+  width: 90%;
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+  margin-top: 5px;
+  outline: none;
+}
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.chat-item {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #e7f3ff;
+}
+
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: #0088cc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.chat-info-name {
+  font-weight: bold;
+}
+
+.chat-info-last-msg {
+  font-size: 13px;
+  color: gray;
+}
+
+/* Центральная часть */
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #e5ddd5;
+  position: relative;
+}
+
+.chat-header {
+  padding: 10px 20px;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.header-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.user-name {
+  font-weight: bold;
+}
+
+.user-status-online {
+  font-size: 12px;
+  color: #4caf50;
+}
+
+.messages-area {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+  background-size: repeat;
+}
+
+.message-bubble {
+  background-color: white;
+  padding: 10px 15px;
+  border-radius: 15px 15px 15px 0;
+  max-width: 60%;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.input-area {
+  padding: 15px 25px;
+  background-color: #f0f2f5;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.message-input {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+.send-btn {
+  background-color: #0088cc;
+  padding: 10px;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+}
+
+/* Правая панель */
+.sidebar-right {
+  width: 350px;
+  background-color: white;
+  border-left: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-right-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-right-content {
+  padding: 20px;
+}
+
+.profile-section {
+  text-align: center;
+}
+
+.large-avatar {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 10px;
+  background-color: #eee;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.media-section {
+  margin-top: 30px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.media-item {
+  aspect-ratio: 1/1;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.link-text {
+  color: #0088cc;
+  font-size: 14px;
+}
+
+.status-input:focus {
+    border-color: #0088cc;
+}

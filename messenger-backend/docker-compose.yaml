@@ -1,0 +1,16 @@
+volumes:
+  users_db_data:
+  clinic_db_data:
+
+services:
+  messenger-database:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: ${USERS_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - users_db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
