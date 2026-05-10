@@ -73,6 +73,7 @@ public class ChatService {
                     .id(chat.getId())
                     .partnerName(partnerUser.name() + " " + partnerUser.surname())
                     .partnerUsername(partnerUser.username())
+                    .partnerAvatarUrl(partnerUser.avatarUrl())
                     .type(chat.getType())
                     .lastMessage("Нажмите, чтобы начать общение")
                     .build();

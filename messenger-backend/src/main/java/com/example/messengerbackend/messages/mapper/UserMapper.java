@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public final class UserMapper {
 
     public GetUserDto toDto(User user) {
-        return new GetUserDto(user.getId(), user.getName(), user.getSurname(), user.getUsername());
+        return new GetUserDto(user.getId(), user.getName(), user.getSurname(), user.getUsername(), user.getAvatarUrl());
     }
 
     public User fromUserRegisterDto(UserRegisterDto userRegisterDto, PasswordEncoder passwordEncoder) {

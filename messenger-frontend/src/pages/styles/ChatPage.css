@@ -252,3 +252,69 @@ body, html {
     justify-content: space-between;
     align-items: center;
 }
+
+/* Общая обертка шапки */
+.chat-header {
+    background: white;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+/* Контейнер для аватара и текста */
+.header-info {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Расстояние между фото и именем */
+}
+
+/* Круглый контейнер аватара */
+.avatar-small {
+    width: 40px;
+    height: 40px;
+    background-color: #e0e0e0; /* Светло-серый фон */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;      /* Центрирование иконки по вертикали */
+    justify-content: center;   /* Центрирование иконки по горизонтали */
+    overflow: hidden;         /* Чтобы картинка не вылезала за круги */
+    flex-shrink: 0;
+}
+
+/* Сама иконка человечка, если нет фото */
+.default-icon {
+    color: #555;
+}
+
+/* Картинка аватара */
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Обертка для текста (Имя + Статус) */
+.header-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #1c1e21;
+    line-height: 1.2;
+}
+
+.user-status {
+    font-size: 13px;
+    line-height: 1.2;
+}
+
+.user-status.online {
+    color: #4caf50; /* Приятный зеленый цвет для статуса */
+    font-weight: 500;
+}

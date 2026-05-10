@@ -20,6 +20,7 @@ public class UserFacadeImpl implements UserFacade {
                 .username(user.getUsername())
                 .name(user.getName())
                 .surname(user.getSurname())
+                .avatarUrl(user.getAvatarUrl())
                 .build();
     }
 }
