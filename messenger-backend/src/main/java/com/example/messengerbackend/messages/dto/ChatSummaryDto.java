@@ -9,6 +9,7 @@ public record ChatSummaryDto(
         UUID id,
         String partnerName,
         String partnerUsername,
+        String partnerAvatarUrl,
         String lastMessage,
         String type
 ) {}

@@ -78,13 +78,15 @@ const ChatPage = () => {
         }
     };
 
+
+
     return (
         <div className="app-container">
             {/* ЛЕВАЯ ЧАСТЬ */}
             <aside className="sidebar-left">
                 <div className="sidebar-header">
                     <div className="sidebar-header-top">
-                        <h2 style={{margin:0}}>Мессенджер</h2>
+                        <h2 style={{ margin: 0 }}>Мессенджер</h2>
                         <button onClick={logout} className="logout-btn">Выход</button>
                     </div>
                     <div className="tab-buttons">
@@ -99,9 +101,9 @@ const ChatPage = () => {
 
                 {activeTab === 'chats' ? (
                     <>
-                        <SearchBar 
-                            query={searchQuery} 
-                            setQuery={setSearchQuery} 
+                        <SearchBar
+                            query={searchQuery}
+                            setQuery={setSearchQuery}
                             onStartChat={async (userId) => {
                                 const newChat = await apiFetch(`/api/chats/create-private/${userId}`, { method: 'POST' });
                                 await fetchChats();
@@ -109,10 +111,21 @@ const ChatPage = () => {
                                 setSearchQuery("");
                             }}
                         />
-                        <div className="chat-list" style={{flex:1, overflowY:'auto'}}>
+                        <div className="chat-list" style={{ flex: 1, overflowY: 'auto' }}>
                             {myChats.map(chat => (
                                 <div key={chat.id} className={`chat-item ${selectedChat?.id === chat.id ? 'active' : ''}`} onClick={() => setSelectedChat(chat)}>
-                                    <div className="avatar">{chat.partnerName[0]}</div>
+                                    <div className="avatar">
+                                        {chat.partnerAvatarUrl ? (
+                                            <AuthenticatedFile
+                                                fileId={chat.partnerAvatarUrl}
+                                                type="IMAGE"
+                                                className="avatar-img-small"
+                                            />
+                                        ) : (
+                                            // Если аватара нет — показываем первую букву имени
+                                            chat.partnerName ? chat.partnerName[0].toUpperCase() : '?'
+                                        )}
+                                    </div>
                                     <div className="chat-info">
                                         <div className="chat-info-name">{chat.partnerName}</div>
                                         <div className="chat-info-last-msg">{chat.lastMessage}</div>
@@ -130,10 +143,23 @@ const ChatPage = () => {
             <main className="chat-window">
                 {selectedChat ? (
                     <>
-                        <header className="chat-header" onClick={() => setSidebarOpen(true)} style={{cursor:'pointer', padding:'15px', background:'white', borderBottom:'1px solid #ddd'}}>
-                            <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
-                                <div className="avatar-small"><User size={20}/></div>
-                                <strong>{selectedChat.partnerName}</strong>
+                        <header className="chat-header" onClick={() => setSidebarOpen(true)}>
+                            <div className="header-info">
+                                <div className="avatar-small">
+                                    {selectedChat.partnerAvatarUrl ? (
+                                        <AuthenticatedFile
+                                            fileId={selectedChat.partnerAvatarUrl}
+                                            type="IMAGE"
+                                            className="avatar-img"
+                                        />
+                                    ) : (
+                                        <User size={20} className="default-icon" />
+                                    )}
+                                </div>
+                                <div className="header-text">
+                                    <div className="user-name">{selectedChat.partnerName}</div>
+                                    {/* <div className="user-status online">онлайн</div> */}
+                                </div>
                             </div>
                         </header>
 
@@ -145,17 +171,17 @@ const ChatPage = () => {
                                         <AuthenticatedFile key={att.id} fileId={att.fileId} filename={att.filename} type={att.logicType} />
                                     ))}
                                     <div className="message-time">
-                                        {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : ''}
+                                        {msg.createdAt ? new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                                     </div>
                                 </div>
                             ))}
                             <div ref={messagesEndRef} />
                         </div>
 
-                        <MessageInput 
-                            message={message} 
-                            setMessage={setMessage} 
-                            onSend={handleSendMessage} 
+                        <MessageInput
+                            message={message}
+                            setMessage={setMessage}
+                            onSend={handleSendMessage}
                             onFileUpload={handleFileUpload}
                             isUploading={isUploading}
                             selectedFilesCount={selectedFiles.length}

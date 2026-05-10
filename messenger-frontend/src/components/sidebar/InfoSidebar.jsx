@@ -20,6 +20,7 @@ const InfoSidebar = ({ chat, onClose }) => {
     const mediaFiles = attachments.filter(a => a.logicType === 'IMAGE');
     const documents = attachments.filter(a => a.logicType === 'FILE');
 
+    console.log(chat)
     return (
         <aside className="sidebar-right">
             <div className="sidebar-right-header">
@@ -31,7 +32,15 @@ const InfoSidebar = ({ chat, onClose }) => {
                 {/* Секция профиля собеседника */}
                 <div className="info-profile-card">
                     <div className="avatar-huge">
-                        {chat.partnerName[0]}
+                        {chat.partnerAvatarUrl ? (
+                            <AuthenticatedFile
+                                fileId={chat.partnerAvatarUrl}
+                                type="IMAGE"
+                                className="avatar-img-large"
+                            />
+                        ) : (
+                            chat.partnerName ? chat.partnerName[0].toUpperCase() : '?'
+                        )}
                     </div>
                     <h4>{chat.partnerName}</h4>
                     <p className="info-username">@{chat.partnerUsername}</p>
@@ -39,14 +48,14 @@ const InfoSidebar = ({ chat, onClose }) => {
 
                 {/* Переключатель вкладок */}
                 <div className="sidebar-tabs">
-                    <button 
+                    <button
                         className={`tab-link ${activeTab === 'media' ? 'active' : ''}`}
                         onClick={() => setActiveTab('media')}
                     >
                         <ImageIcon size={18} />
                         <span>Медиа</span>
                     </button>
-                    <button 
+                    <button
                         className={`tab-link ${activeTab === 'files' ? 'active' : ''}`}
                         onClick={() => setActiveTab('files')}
                     >
@@ -62,9 +71,9 @@ const InfoSidebar = ({ chat, onClose }) => {
                             {mediaFiles.length > 0 ? (
                                 mediaFiles.map(img => (
                                     <div key={img.id} className="media-tile">
-                                        <AuthenticatedFile 
-                                            fileId={img.fileId} 
-                                            type="IMAGE" 
+                                        <AuthenticatedFile
+                                            fileId={img.fileId}
+                                            type="IMAGE"
                                             className="tile-img"
                                         />
                                     </div>
@@ -79,11 +88,11 @@ const InfoSidebar = ({ chat, onClose }) => {
                         <div className="files-list">
                             {documents.length > 0 ? (
                                 documents.map(file => (
-                                    <AuthenticatedFile 
-                                        key={file.id} 
-                                        fileId={file.fileId} 
-                                        filename={file.filename} 
-                                        type="FILE" 
+                                    <AuthenticatedFile
+                                        key={file.id}
+                                        fileId={file.fileId}
+                                        filename={file.filename}
+                                        type="FILE"
                                     />
                                 ))
                             ) : (

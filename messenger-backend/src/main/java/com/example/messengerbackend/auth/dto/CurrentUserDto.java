@@ -11,7 +11,8 @@ public record CurrentUserDto(int id,
                              String username,
                              String status,
                              String email,
-                             Timestamp created
+                             Timestamp created,
+                             String avatarUrl
 ) {
 
 }

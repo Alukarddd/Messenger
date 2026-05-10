@@ -65,6 +65,13 @@ public class UsersController {
         return usersService.findCurrentUserDtoById(userId);
     }
 
+    @PostMapping("/me/avatar/{fileId}")
+    public ResponseEntity<CurrentUserDto> updateAvatar(@PathVariable long fileId, Authentication authentication) {
+        int userId = getUserId(authentication);
+        CurrentUserDto updatedUser = usersService.updateAvatar(userId, fileId);
+        return ResponseEntity.ok(updatedUser);
+    }
+
     private int getUserId(Authentication authentication) {
         Jwt jwt = (Jwt) authentication.getPrincipal();
         if (jwt.getClaims().containsKey("userId")) {

@@ -69,7 +69,7 @@ public class UsersService {
 
     public GetUserDto findUserDtoById(int id) {
         User user = findUserById(id);
-        return new GetUserDto(user.getId(), user.getName(), user.getSurname(), user.getUsername());
+        return userMapper.toDto(user);
     }
 
     public CurrentUserDto findCurrentUserDtoById(int id) {
@@ -81,6 +81,7 @@ public class UsersService {
                 .email(user.getEmail())
                 .created(user.getCreatedAt())
                 .id(user.getId())
+                .avatarUrl(user.getAvatarUrl())
                 .status(user.getStatusText())
                 .build();
     }
@@ -134,6 +135,7 @@ public class UsersService {
                 .created(user.getCreatedAt())
                 .id(user.getId())
                 .status(user.getStatusText())
+                .avatarUrl(user.getAvatarUrl())
                 .build();
     }
 
@@ -158,4 +160,12 @@ public class UsersService {
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
+    @Transactional
+    public CurrentUserDto updateAvatar(int userId, long fileId) {
+        User user = findUserById(userId);
+        user.setAvatarUrl(String.valueOf(fileId));
+        User savedUser = usersRepository.save(user);
+        return findCurrentUserDtoById(savedUser.getId());
+    }
+
 }
