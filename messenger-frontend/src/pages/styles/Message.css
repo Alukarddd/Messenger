@@ -1,0 +1,51 @@
+/* Сообщения */
+.messages-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+}
+
+.message-bubble {
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    max-width: 70%;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.my-message {
+    align-self: flex-end;
+    background-color: #dcf8c6;
+    border-bottom-right-radius: 2px;
+}
+
+.partner-message {
+    align-self: flex-start;
+    background-color: #ffffff;
+    border-bottom-left-radius: 2px;
+}
+
+.attachment-preview {
+    max-width: 250px;
+    border-radius: 8px;
+    margin-top: 8px;
+    cursor: pointer;
+    display: block;
+}
+
+.file-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 6px;
+    text-decoration: none;
+    color: #0088cc;
+    font-size: 13px;
+    margin-top: 5px;
+}

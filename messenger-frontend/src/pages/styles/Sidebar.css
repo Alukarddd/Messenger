@@ -1,0 +1,117 @@
+.sidebar-right {
+    width: 320px;
+    min-width: 320px;
+    background: white;
+    border-left: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sidebar-right-header {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+}
+
+/* Карточка профиля в инфо */
+.info-profile-card {
+    text-align: center;
+    padding: 20px 10px;
+}
+
+.avatar-huge {
+    width: 80px;
+    height: 80px;
+    background: #0088cc;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.info-username {
+    color: #0088cc;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* Вкладки */
+.sidebar-tabs {
+    display: flex;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.tab-link {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 12px;
+    transition: 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-link:hover {
+    color: #0088cc;
+}
+
+.tab-link.active {
+    color: #0088cc;
+    border-bottom: 2px solid #0088cc;
+}
+
+/* Сетка Медиа (Плитки) */
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 картинки в ряд */
+    gap: 4px;
+    padding: 8px;
+}
+
+.media-tile {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Квадратные плитки */
+    overflow: hidden;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+/* Стили внутри плиток для AuthenticatedFile */
+.media-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Чтобы картинка заполняла квадрат без искажений */
+    cursor: pointer;
+}
+
+/* Список файлов */
+.files-list {
+    padding: 10px;
+}
+
+.empty-msg {
+    text-align: center;
+    color: #aaa;
+    margin-top: 40px;
+    font-size: 14px;
+}
